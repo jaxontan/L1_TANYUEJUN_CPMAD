@@ -32,6 +32,14 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
     User? user =
         await _auth.signIn(email: _email.text.trim(), password: _password.text);
+    
+    if (user == null && _email.text.trim().toLowerCase() == 'demo@sea.com') {
+      user = await _auth.signUp(
+          email: 'demo@sea.com',
+          password: _password.text,
+          username: 'Demo Explorer');
+    }
+
     if (!mounted) return;
     setState(() => _isLoading = false);
     if (user != null) {
@@ -51,6 +59,12 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const MemoryGameScreen()));
     }
+  }
+
+  void _fillDemoAccount() {
+    _email.text = 'demo@sea.com';
+    _password.text = '123456';
+    _handleLogin();
   }
 
   @override
@@ -112,6 +126,25 @@ class _LoginPageState extends State<LoginPage> {
                   icon: Icons.phishing_rounded,
                   onPressed: _handleLogin,
                   isLoading: _isLoading),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _isLoading ? null : _fillDemoAccount,
+                icon: const Icon(Icons.flash_on_rounded,
+                    color: Colors.amber, size: 18),
+                label: const Text(
+                  'Quick Demo Login (demo@sea.com)',
+                  style: TextStyle(
+                      color: Colors.amber,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: const BorderSide(color: Colors.amber, width: 1.2),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+              ),
             ],
           ),
         ),
