@@ -105,45 +105,79 @@ class _FishTankScreenState extends State<FishTankScreen>
                   top: 70,
                   left: 16,
                   right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                        color: FishTheme.oceanCard.withValues(alpha: 0.85),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                            color: FishTheme.cyanAccent.withValues(alpha: 0.3))),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(children: [
-                            const Text('🐠', style: TextStyle(fontSize: 20)),
-                            const SizedBox(width: 8),
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('My Fish Tank',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  Text(
-                                      '${_ownedFishItems.length} / ${FishItem.defaultMarketCatalog.length} Fishes Unlocked',
-                                      style: const TextStyle(
-                                          color: FishTheme.cyanGlow,
-                                          fontSize: 12))
-                                ])
-                          ]),
-                          IconButton(
-                              icon: const Icon(Icons.refresh_rounded,
-                                  color: FishTheme.cyanAccent, size: 20),
-                              onPressed: _loadOwnedFishes)
-                        ]),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                            color: FishTheme.oceanCard.withValues(alpha: 0.85),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                                color: FishTheme.cyanAccent
+                                    .withValues(alpha: 0.3))),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(children: [
+                                const Text('🐠', style: TextStyle(fontSize: 20)),
+                                const SizedBox(width: 8),
+                                Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('My Fish Tank',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)),
+                                      Text(
+                                          '${_ownedFishItems.length} / ${FishItem.defaultMarketCatalog.length} Fishes Unlocked',
+                                          style: const TextStyle(
+                                              color: FishTheme.cyanGlow,
+                                              fontSize: 12))
+                                    ])
+                              ]),
+                              IconButton(
+                                  icon: const Icon(Icons.refresh_rounded,
+                                      color: FishTheme.cyanAccent, size: 20),
+                                  onPressed: _loadOwnedFishes)
+                            ]),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF041926).withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: Colors.amber.withValues(alpha: 0.6),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.touch_app_rounded,
+                                color: Colors.amber, size: 16),
+                            SizedBox(width: 6),
+                            Text(
+                              'Click on the fishes to know more about this fish!',
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 130.0, bottom: 20),
+                    padding: const EdgeInsets.only(top: 170.0, bottom: 20),
                     child: _isLoading
                         ? const Center(
                             child: CircularProgressIndicator(

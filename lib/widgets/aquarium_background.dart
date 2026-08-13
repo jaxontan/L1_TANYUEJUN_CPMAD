@@ -24,8 +24,9 @@ class AquariumBackground extends StatefulWidget {
 }
 
 class _AquariumBackgroundState extends State<AquariumBackground>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _seagrassController;
+  late AnimationController _bubbleController;
 
   @override
   void initState() {
@@ -34,11 +35,17 @@ class _AquariumBackgroundState extends State<AquariumBackground>
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
+
+    _bubbleController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
   }
 
   @override
   void dispose() {
     _seagrassController.dispose();
+    _bubbleController.dispose();
     super.dispose();
   }
 
@@ -77,7 +84,13 @@ class _AquariumBackgroundState extends State<AquariumBackground>
       child: Stack(
         children: [
           Positioned.fill(
-              child: CustomPaint(painter: _AquariumBubblesPainter())),
+            child: AnimatedBuilder(
+              animation: _bubbleController,
+              builder: (context, _) => CustomPaint(
+                painter: _AquariumBubblesPainter(progress: _bubbleController.value),
+              ),
+            ),
+          ),
           Positioned.fill(
             child: AnimatedBuilder(
               animation: _seagrassController,
@@ -155,34 +168,41 @@ class _AquariumBackgroundState extends State<AquariumBackground>
 }
 
 class _AquariumBubblesPainter extends CustomPainter {
+  final double progress;
+  _AquariumBubblesPainter({required this.progress});
+
   @override
   void paint(Canvas canvas, Size size) {
     final bubblePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.12)
+      ..color = Colors.white.withValues(alpha: 0.14)
       ..style = PaintingStyle.fill;
     final borderPaint = Paint()
-      ..color = const Color(0xFF80EED3).withValues(alpha: 0.25)
+      ..color = const Color(0xFF80EED3).withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
     final shinePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.4)
+      ..color = Colors.white.withValues(alpha: 0.45)
       ..style = PaintingStyle.fill;
 
-    final bubbles = [
-      Offset(size.width * 0.15, size.height * 0.18),
-      Offset(size.width * 0.85, size.height * 0.25),
-      Offset(size.width * 0.25, size.height * 0.45),
-      Offset(size.width * 0.75, size.height * 0.60),
-      Offset(size.width * 0.10, size.height * 0.78),
-      Offset(size.width * 0.90, size.height * 0.82),
-      Offset(size.width * 0.50, size.height * 0.10),
-      Offset(size.width * 0.35, size.height * 0.88)
+    final specs = [
+      (xRatio: 0.10, speed: 1.0, radius: 14.0, phase: 0.0),
+      (xRatio: 0.25, speed: 0.7, radius: 22.0, phase: 0.3),
+      (xRatio: 0.40, speed: 1.3, radius: 9.0, phase: 0.6),
+      (xRatio: 0.55, speed: 0.9, radius: 18.0, phase: 0.2),
+      (xRatio: 0.70, speed: 1.1, radius: 26.0, phase: 0.5),
+      (xRatio: 0.85, speed: 0.8, radius: 12.0, phase: 0.8),
+      (xRatio: 0.18, speed: 1.4, radius: 8.0, phase: 0.1),
+      (xRatio: 0.92, speed: 1.2, radius: 16.0, phase: 0.7),
     ];
-    final radii = [14.0, 22.0, 9.0, 18.0, 26.0, 12.0, 8.0, 16.0];
 
-    for (int i = 0; i < bubbles.length; i++) {
-      final pos = bubbles[i];
-      final r = radii[i % radii.length];
+    for (final spec in specs) {
+      final yProgress = (progress * spec.speed + spec.phase) % 1.0;
+      final y = size.height * (1.0 - yProgress);
+      final x =
+          size.width * spec.xRatio + math.sin(yProgress * 4 * math.pi) * 12.0;
+      final pos = Offset(x, y);
+      final r = spec.radius;
+
       canvas.drawCircle(pos, r, bubblePaint);
       canvas.drawCircle(pos, r, borderPaint);
       canvas.drawCircle(
@@ -191,7 +211,8 @@ class _AquariumBubblesPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _AquariumBubblesPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }
 
 class _SeagrassPainter extends CustomPainter {
